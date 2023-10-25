@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
   <meta charset="UTF-8">
@@ -47,11 +47,13 @@
     </div>
   </header>
 
+  <div class="alert" id="alert" role="alert"></div>
+
   <div class="lista-atividades-todas d-flex justify-content-center align-items-center">
     <div class="lista-atividades-andamento">
       <p>Em andamento</p>
 
-      <div class="card">
+       <!-- <div class="card">
         <div class="card-body">
           <div class="header-card d-flex">
             <h5 class="card-title">Nome da tarefa</h5>
@@ -61,55 +63,84 @@
             <h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>
             <h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>
           </div>
-
           <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum laboriosam assumenda
             incidunt! Ab sunt animi distinctio quis dolore sapiente, nam cumque consectetur et! Tempora autem blanditiis
             ipsum praesentium, ut dolores.</p>
           <a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>
-          <a href="#" class="card-link btn btn-danger"><i class="bi bi-trash"></i>Excluir</a>
+          <a href="#" class="card-link btn btn-danger"><i cla1ss="bi bi-trash"></i>Excluir</a>
           <a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>
         </div>
-      </div>
+      </div>  -->
 
-      <div class="card">
-        <div class="card-body">
-          <div class="header-card d-flex">
-            <h5 class="card-title">Nome da tarefa</h5>
-            <h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>
-          </div>
-          <div class="card-prazo">
-            <h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>
-          </div>
+      <?php
 
-          <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum laboriosam assumenda
-            incidunt! Ab sunt animi distinctio quis dolore sapiente, nam cumque consectetur et! Tempora autem blanditiis
-            ipsum praesentium, ut dolores.</p>
-          <a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>
-          <a href="#" class="card-link btn btn-danger"><i class="bi bi-trash"></i>Excluir</a>
-          <a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>
-        </div>
-      </div>
+      //Incluindo o arquivo de conexão no banco de dados
+      require_once("backend/database.php");
 
-      <div class="card">
-        <div class="card-body">
-          <div class="header-card d-flex">
-            <h5 class="card-title">Nome da tarefa</h5>
-            <h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>
-          </div>
-          <div class="card-prazo">
-            <h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>
-          </div>
+      setlocale(LC_TIME, 'pt_BR');
 
-          <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum laboriosam assumenda
-            incidunt! Ab sunt animi distinctio quis dolore sapiente, nam cumque consectetur et! Tempora autem blanditiis
-            ipsum praesentium, ut dolores.</p>
-          <a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>
-          <a href="#" class="card-link btn btn-danger"><i class="bi bi-trash"></i>Excluir</a>
-          <a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>
-        </div>
-      </div>
+      //Definindo a query
+      $SQL = "SELECT * FROM atividades";
+
+      //Guarda a busca no array $resultado
+      $resultado = $conexao->query($SQL);
+
+      //Capturando a quantidade de registros
+      $quantidade = $resultado->rowCount();
+
+      if ($quantidade == 0) {
+        echo "Não há registros a serem exibidos";
+        return;
+      }
+
+
+
+      //Percorrendo todos os registros
+      while ($linha = $resultado->fetch(PDO::FETCH_OBJ)) {
+
+        echo '<div class="card">';
+        echo '<div class="card-body">';
+        echo '<div class="header-card d-flex">';
+        echo '<h5 class="card-title">' . $linha->titulo . '</h5>';
+        echo '<h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>';
+        echo '</div>';
+        echo '<div class="card-prazo">';
+
+        $timestampIni = strtotime($linha->data_criacao);
+        $timestampEnd = strtotime($linha->data_conclusao);
+
+        $meses = array(
+          1 => 'janeiro',
+          2 => 'fevereiro',
+          3 => 'março',
+          4 => 'abril',
+          5 => 'maio',
+          6 => 'junho',
+          7 => 'julho',
+          8 => 'agosto',
+          9 => 'setembro',
+          10 => 'outubro',
+          11 => 'novembro',
+          12 => 'dezembro'
+        );
+
+        echo '<h6 class="card-subtitle mb-2 text-body-secondary">Criada em: ' . $date = date("d \d\e ", $timestampIni) . $meses[date("n", $timestampIni)] . date(" \d\e Y \à\s H:i:s", $timestampIni) . '</h6>';
+        echo '<h6 class="card-subtitle mb-2 text-body-secondary">Expira em: ' . $date = date("d \d\e ", $timestampEnd) . $meses[date("n", $timestampEnd)] . date(" \d\e Y \à\s H:i:s", $timestampEnd) . '</h6>';
+        echo '</div>';
+        echo '<p class="card-text">' . $linha->descricao . '</p>';
+        echo '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
+        echo '<a href="backend/delete.php" class="card-link btn btn-danger" id="excluir"><i class="bi bi-trash"></i>Excluir</a>';
+        echo '<a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>';
+        echo '</div>';
+        echo '</div>';
+      }
+
+
+
+      //Fechando a conexão com o banco de dados
+      // $conexao = null;
+      unset($conexao);
+      ?>
 
     </div>
 
@@ -141,28 +172,28 @@
 
   <!-- Créditos -->
   <div class="modal fade" id="creditosModal" tabindex="-1" aria-labelledby="creditosLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="creditosLabel">Créditos</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>Desenvolvido por: </p>
-            <p>Éverton Simplício da Silva</p>
-            <p>Lucas Vinicius Pisciotta</p>
-            <p>Mateus Souza da Silva</p>
-            <p>Maxwel Barbosa Silva</p>
-            <p>Pedro Lucas Louzada</p>
-            <p>Renan Souza de Oliveira</p>
-            <p>Yago Giraud da Fonseca</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-          </div>
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="creditosLabel">Créditos</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Desenvolvido por: </p>
+          <p>Éverton Simplício da Silva</p>
+          <p>Lucas Vinicius Pisciotta</p>
+          <p>Mateus Souza da Silva</p>
+          <p>Maxwel Barbosa Silva</p>
+          <p>Pedro Lucas Louzada</p>
+          <p>Renan Souza de Oliveira</p>
+          <p>Yago Giraud da Fonseca</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
         </div>
       </div>
     </div>
+  </div>
 
   <!-- Atividades  -->
   <div class="modal fade" id="criarAtividadeModal" tabindex="-1" aria-labelledby="criarModalLabel" aria-hidden="true">
@@ -172,21 +203,22 @@
           <h1 class="modal-title fs-5" id="criarModalLabel">Criar atividade</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <form action="POST" id="adicionarForm">
         <div class="modal-body">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" placeholder="nome">
+            <input type="text" class="form-control" id="nome" placeholder="nome" name="nome">
             <label for="floatingInput">Nome da atividade</label>
           </div>
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" placeholder="descricao">
-            <label for="floatingInput">Descrição</label>
+            <input type="text" class="form-control" id="descricao" placeholder="descricao" name="descricao">
+            <label for="descricao">Descrição</label>
           </div>
           <div class="form-group">
-            <label for="date" id="form-label">Data do evento:</label>
-            <input type="date" class="form-control" id="date" name="date" value="">
+            <label for="date" id="data-atividade">Dia da conclusão:</label>
+            <input type="date" class="form-control" id="conclusao" name="conclusao" value="">
           </div>
 
-          <p>Status:</p>
+          <!-- <p>Status:</p>
           <div class="form-check">
             <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="0" checked>
             <label class="form-check-label" for="gridRadios1">
@@ -197,21 +229,103 @@
             <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="1">
             <label class="form-check-label" for="gridRadios2">
               Concluída
-            </label>
-          </div>
+            </label> -->
+        </div>
 
 
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-            <button type="button" class="btn btn-primary">Salvar</button>
-          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="fechar">Fechar</button>
+          <input type="button" class="btn btn-primary" id="cadastrar" name="cadastrar">Salvar</input>
+        </form>
         </div>
       </div>
     </div>
+  </div>
+
+  <script>
+    $(document).ready(function(){
+      $('#cadastrar').click(function(){
+        var _nome = $('#nome').val(); 
+        var _descricao = $('#descricao').val();
+        var _conclusao = $('#conclusao').val(); 
+
+        $('#alert').html('');
+			if (nome == '') {
+				$('#alert').html('Preencher o nome.');
+				$('#alert').addClass("alert-danger");
+				return false;				
+			}
+
+			$('#alert').html('');
+			if (descricao == '') {
+				$('#alert').html('Preencher a descricao.');
+				$('#alert').addClass("alert-danger");
+				return false;
+			}
+
+			$('#alert').html('');
+			if (conclusao == '') {
+				$('#alert').html('Preencher a data de conclusao.');
+				$('#alert').addClass("alert-danger");
+				return false;
+			}
+
+			$('#alert').html('');
+
+     
+
+      $.ajax({
+        method: 'POST',
+        url: 'backend/adicionar.php',
+        data: {
+          nome:_nome,
+          descricao:_descricao,
+          conclusao:_conclusao
+        },
+        success: function(result) {
+          $('form').trigger("reset");
+					$('#alert').addClass("alert-success");
+					$('#alert').fadeIn().html(result);
+          
+
+          setTimeout(function(){
+            $('#alert').fadeOut('Slow');
+          },3000);
+          
+            // Suponha que o servidor retorne a atividade inserida em formato JSON
+          var atividade = JSON.parse(result);
+          
+          // Crie um elemento HTML para exibir a atividade na tela
+          var atividadeHTML = '<div class="card">';
+          atividadeHTML +=  '<div class="card-body">';
+          atividadeHTML +=  '<div class="header-card d-flex">';
+          atividadeHTML += '<h5 class="card-title">' + atividade.nome + '</h5>';
+          atividadeHTML += '<h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>';
+          atividadeHTML += '</div>';
+          atividadeHTML += '<div class="card-prazo">';
+          atividadeHTML += '<h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>';
+          atividadeHTML += '<h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>';
+          atividadeHTML += '</div>';
+          atividadeHTML += '<p class="card-text">' + atividade.descricao + '</p>';
+          atividadeHTML += '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
+          atividadeHTML += '<a href="backend/delete.php" class="card-link btn btn-danger" id="excluir"><i class="bi bi-trash"></i>Excluir</a>';
+          atividadeHTML += '<a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>';
+          atividadeHTML += '</div>';
+          atividadeHTML += '</div>'; 
+
+          $('#lista-atividades-andamento').append(atividadeHTML);
+          
+        }
+      })
+      })
+    })
+      
+    
+  </script>
 
 
-    
-    
+
+
 </body>
 
 </html>
