@@ -1,7 +1,7 @@
 <?php
 
 //Incluindo o arquivo de conexão no banco de dados
-require_once("backend/database.php");
+require_once("database.php");
 
 setlocale(LC_TIME, 'pt_BR'); 
 

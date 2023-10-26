@@ -50,13 +50,33 @@
   <div class="alert" id="alert" role="alert"></div>
 
   <div class="lista-atividades-todas d-flex justify-content-center align-items-center">
-    <div class="lista-atividades-andamento">
+    <div class="lista-atividades-andamento" id="atividades-andamento">
       <p>Em andamento</p>
+
+      <script>
+        // Função para fazer a requisição AJAX
+        function fazerRequisicao() {
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var resposta = xhr.responseText;
+                    document.getElementById("atividades-andamento").innerHTML = resposta;
+                }
+            };
+
+            xhr.open("GET", "backend/show.php", true);
+            xhr.send();
+        }
+
+        // Dispara a função fazerRequisicao após o carregamento da página
+        window.addEventListener("DOMContentLoaded", fazerRequisicao);
+    </script>
 
        <!-- <div class="card">
         <div class="card-body">
           <div class="header-card d-flex">
-            <h5 class="card-title">Nome da tarefa</h5>
+            <h5 class="card-title">titulo da tarefa</h5>
             <h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>
           </div>
           <div class="card-prazo">
@@ -72,75 +92,7 @@
         </div>
       </div>  -->
 
-      <?php
-
-      //Incluindo o arquivo de conexão no banco de dados
-      require_once("backend/database.php");
-
-      setlocale(LC_TIME, 'pt_BR');
-
-      //Definindo a query
-      $SQL = "SELECT * FROM atividades";
-
-      //Guarda a busca no array $resultado
-      $resultado = $conexao->query($SQL);
-
-      //Capturando a quantidade de registros
-      $quantidade = $resultado->rowCount();
-
-      if ($quantidade == 0) {
-        echo "Não há registros a serem exibidos";
-        return;
-      }
-
-
-
-      //Percorrendo todos os registros
-      while ($linha = $resultado->fetch(PDO::FETCH_OBJ)) {
-
-        echo '<div class="card">';
-        echo '<div class="card-body">';
-        echo '<div class="header-card d-flex">';
-        echo '<h5 class="card-title">' . $linha->titulo . '</h5>';
-        echo '<h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>';
-        echo '</div>';
-        echo '<div class="card-prazo">';
-
-        $timestampIni = strtotime($linha->data_criacao);
-        $timestampEnd = strtotime($linha->data_conclusao);
-
-        $meses = array(
-          1 => 'janeiro',
-          2 => 'fevereiro',
-          3 => 'março',
-          4 => 'abril',
-          5 => 'maio',
-          6 => 'junho',
-          7 => 'julho',
-          8 => 'agosto',
-          9 => 'setembro',
-          10 => 'outubro',
-          11 => 'novembro',
-          12 => 'dezembro'
-        );
-
-        echo '<h6 class="card-subtitle mb-2 text-body-secondary">Criada em: ' . $date = date("d \d\e ", $timestampIni) . $meses[date("n", $timestampIni)] . date(" \d\e Y \à\s H:i:s", $timestampIni) . '</h6>';
-        echo '<h6 class="card-subtitle mb-2 text-body-secondary">Expira em: ' . $date = date("d \d\e ", $timestampEnd) . $meses[date("n", $timestampEnd)] . date(" \d\e Y \à\s H:i:s", $timestampEnd) . '</h6>';
-        echo '</div>';
-        echo '<p class="card-text">' . $linha->descricao . '</p>';
-        echo '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
-        echo '<a href="backend/delete.php" class="card-link btn btn-danger" id="excluir"><i class="bi bi-trash"></i>Excluir</a>';
-        echo '<a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>';
-        echo '</div>';
-        echo '</div>';
-      }
-
-
-
-      //Fechando a conexão com o banco de dados
-      // $conexao = null;
-      unset($conexao);
-      ?>
+ 
 
     </div>
 
@@ -150,7 +102,7 @@
       <div class="card">
         <div class="card-body">
           <div class="header-card d-flex">
-            <h5 class="card-title">Nome da tarefa</h5>
+            <h5 class="card-title">titulo da tarefa</h5>
             <h5 class="offset-md-4 ms-auto">Status: Concluída</h5>
           </div>
           <div class="card-prazo">
@@ -206,8 +158,8 @@
         <form action="POST" id="adicionarForm">
         <div class="modal-body">
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="nome" placeholder="nome" name="nome">
-            <label for="floatingInput">Nome da atividade</label>
+            <input type="text" class="form-control" id="titulo" placeholder="titulo" name="titulo">
+            <label for="floatingInput">Titulo da atividade</label>
           </div>
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="descricao" placeholder="descricao" name="descricao">
@@ -245,13 +197,13 @@
   <script>
     $(document).ready(function(){
       $('#cadastrar').click(function(){
-        var _nome = $('#nome').val(); 
+        var _titulo = $('#titulo').val(); 
         var _descricao = $('#descricao').val();
         var _conclusao = $('#conclusao').val(); 
 
         $('#alert').html('');
-			if (nome == '') {
-				$('#alert').html('Preencher o nome.');
+			if (titulo == '') {
+				$('#alert').html('Preencher o titulo.');
 				$('#alert').addClass("alert-danger");
 				return false;				
 			}
@@ -272,16 +224,19 @@
 
 			$('#alert').html('');
 
-     
+      var dadosJSON = {
+        titulo:_titulo,
+        descricao:_descricao,
+        data_conclusao:_conclusao
+    };
+    var dadosJSONString = JSON.stringify(dadosJSON);
+
 
       $.ajax({
         method: 'POST',
         url: 'backend/adicionar.php',
-        data: {
-          nome:_nome,
-          descricao:_descricao,
-          conclusao:_conclusao
-        },
+        contentType: 'application/json',
+        data: dadosJSONString,
         success: function(result) {
           $('form').trigger("reset");
 					$('#alert').addClass("alert-success");
@@ -292,19 +247,42 @@
             $('#alert').fadeOut('Slow');
           },3000);
           
+         
             // Suponha que o servidor retorne a atividade inserida em formato JSON
-          var atividade = JSON.parse(result);
+          var atividade = JSON.parse(dadosJSONString);
+
+          // Suponha que o servidor retorne a data de conclusão em um formato válido, como "2023-10-27 00:00:00"
+var dataConclusao = new Date(atividade.data_conclusao);
+var options = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric'
+};
+
+var dataCriacao = new Date().toLocaleString('pt-BR', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric'
+});
+
+var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
           
           // Crie um elemento HTML para exibir a atividade na tela
           var atividadeHTML = '<div class="card">';
           atividadeHTML +=  '<div class="card-body">';
           atividadeHTML +=  '<div class="header-card d-flex">';
-          atividadeHTML += '<h5 class="card-title">' + atividade.nome + '</h5>';
+          atividadeHTML += '<h5 class="card-title">' + atividade.titulo + '</h5>';
           atividadeHTML += '<h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>';
           atividadeHTML += '</div>';
           atividadeHTML += '<div class="card-prazo">';
-          atividadeHTML += '<h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>';
-          atividadeHTML += '<h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>';
+          atividadeHTML += '<h6 class="card-subtitle mb-2 text-body-secondary">Criada em: ' + dataCriacao + '</h6>';
+          atividadeHTML += '<h6 class="card-subtitle mb-2 text-body-secondary">Expira em: ' + dataConclusaoFormatada + '</h6>';
           atividadeHTML += '</div>';
           atividadeHTML += '<p class="card-text">' + atividade.descricao + '</p>';
           atividadeHTML += '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
@@ -313,11 +291,16 @@
           atividadeHTML += '</div>';
           atividadeHTML += '</div>'; 
 
-          $('#lista-atividades-andamento').append(atividadeHTML);
+          $('#atividades-andamento').append(atividadeHTML);
           
-        }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          console.error('Erro na requisição: ' + errorThrown);
+      }
       })
-      })
+      });
+
+      
     })
       
     
