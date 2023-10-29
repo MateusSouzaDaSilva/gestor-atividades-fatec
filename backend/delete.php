@@ -1,42 +1,52 @@
 <?php
 
-// Dados mockados
-// $codigo = "14";
+require_once('database.php');
 
-//Incluindo o arquivo de conexão no banco de dados
-try {
-require_once("database.php");
+// $codigo = trim($_GET['id']);
 
-// Verifica se o ID a ser excluído foi passado na URL
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+// // Dados mockados
+// // $codigo = "14";
 
+// if ($codigo == "") {
+//     echo "Código não encontrado!";
+//     return;
+// }
 
+// //Incluindo o arquivo de conexão no banco de dados
+// require_once("database.php");
 
-// Verifica se o ID a ser excluído foi passado na URL
-if (isset($_GET["excluir"])) {
-    // Obtém o ID do registro a ser apagado
-    $id_para_apagar = $_GET["excluir"];
+// //Definindo a query
+// $SQL = "DELETE FROM atividades " .
+// " WHERE id = :id ";
 
-    // Define a instrução SQL DELETE
-    $sql = "DELETE FROM atividades WHERE id = :id";
+// $statement = $conexao->prepare($SQL);
+// $statement->bindParam(':id', $codigo);
+// if ($statement->execute()){
+//     echo "Registro removido com sucesso";
+// }
+// else{
+//     echo "Falha ao remover o registro";
+// }
 
-    // Prepara a consulta
+// Verifica se a solicitação foi feita por método POST e se o ID da atividade foi enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atividade_id'])) {
+    $atividade_id = $_POST['atividade_id'];
+
+    // Prepara e executa a query para deletar a atividade do banco de dados
+    $sql = "DELETE FROM atividades WHERE id = :atividade_id";
     $statement = $conexao->prepare($sql);
 
-    // Vincula o parâmetro ID
-    $statement->bindParam(':id', $id_para_apagar, PDO::PARAM_INT);
-
-    // Executa a consulta
-    $statement->execute();
-
-    echo "Registro apagado com sucesso.";
+    try {
+        $statement->execute(['atividade_id' => $atividade_id]);
+        echo "Atividade deletada com sucesso";
+    } catch (PDOException $e) {
+        echo "Erro ao deletar a atividade: " . $e->getMessage();
+    }
+} else {
+    echo "Requisição inválida";
 }
-} catch (PDOException $e) {
-echo "Erro ao apagar o registro: " . $e->getMessage();
-}
-
 
 //Fechando a conexão com o banco de dados
 unset($conexao);
-?>
 
+?>

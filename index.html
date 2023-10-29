@@ -20,7 +20,7 @@
     integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
     crossorigin="anonymous"></script>
 
-  <link rel="stylesheet" href="../frontend/css/style.css">
+  <link rel="stylesheet" href="frontend/css/style.css">
 </head>
 
 <body>
@@ -301,7 +301,64 @@ var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
       });
 
       
+      
     })
+
+ 
+
+// document.addEventListener("DOMContentLoaded", function() {
+//   const cardId = 1; // Substitua isso pelo ID real do card que deseja excluir
+
+//   const deleteButton = document.getElementById("excluir");
+  
+//   if (deleteButton) {
+//     deleteButton.addEventListener("click", function() {
+//       fetch('backend/delete.php', {
+//         method: 'DELETE',
+//         body: JSON.stringify({ cardId: cardId }),
+//     }) .then(response => {
+//       if (response.ok) {
+//           // Card excluído com sucesso
+//           // Faça algo, como esconder o card da interface
+//           console.log("Card excluído com sucesso");
+//       } else {
+//           // Lidar com erros, se houver
+//           console.log("Falha ao excluir o card");
+//       }
+//   }) .catch(error => {
+//     console.error('Ocorreu um erro:', error);
+// });
+//     })
+//   }
+   
+   
+   
+// });
+
+$(document).ready(function () {
+  $('excluir').on('click', function () {
+      var atividade_id = $(this).data('atividade-id');
+
+      // Enviar uma solicitação Ajax para deletar a atividade
+      $.ajax({
+          type: 'POST',
+          url: 'backend/delete.php',
+          data: { atividade_id: atividade_id },
+          success: function (response) {
+              // Exibir a resposta do servidor (pode ser um alert, mensagem na tela, etc.)
+              alert(response);
+              // Se a exclusão for bem-sucedida, você pode fazer outras ações, como remover o elemento HTML da atividade da interface
+              // Exemplo: $(`#atividade-${atividade_id}`).remove();
+          },
+          error: function (xhr, status, error) {
+              // Lidar com erros caso a exclusão falhe
+              console.error(error);
+          }
+      });
+  });
+});
+  
+  
       
     
   </script>

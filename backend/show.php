@@ -45,7 +45,7 @@ while ($linha = $resultado->fetch(PDO::FETCH_OBJ)) {
     echo  '</div>';
     echo  '<p class="card-text">' . $linha->descricao . '</p>';
     echo '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
-    echo  '<a href="backend/delete.php" class="card-link btn btn-danger" id="excluir"><i class="bi bi-trash"></i>Excluir</a>';
+    echo  '<button class="card-link btn btn-danger" id="excluir" data-atividade-id="' . $linha->id . '"><i class="bi bi-trash"></i>Excluir</button>';
     echo  '<a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>';
     echo '</div>';
     echo '</div>';
