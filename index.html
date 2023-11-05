@@ -96,10 +96,10 @@
 
     </div>
 
-    <div class="lista-atividades-concluidas">
+    <div class="lista-atividades-concluidas" id="atividades-concluidas">
       <p>Concluídas</p>
 
-      <div class="card">
+      <!-- <div class="card">
         <div class="card-body">
           <div class="header-card d-flex">
             <h5 class="card-title">titulo da tarefa</h5>
@@ -117,7 +117,27 @@
           <a href="#" class="card-link btn btn-danger"><i class="bi bi-trash"></i>Excluir</a>
           <a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>
         </div>
-      </div>
+      </div> -->
+
+      <script>
+        // Função para fazer a requisição AJAX
+        function fazerRequisicao() {
+            var xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var resposta = xhr.responseText;
+                    document.getElementById("atividades-concluidas").innerHTML = resposta;
+                }
+            };
+
+            xhr.open("GET", "backend/exibir_finalizadas.php", true);
+            xhr.send();
+        }
+
+        // Dispara a função fazerRequisicao após o carregamento da página
+        window.addEventListener("DOMContentLoaded", fazerRequisicao);
+    </script>
 
     </div>
   </div>
@@ -193,6 +213,41 @@
       </div>
     </div>
   </div>
+
+  <!-- Atualizar atividades -->
+
+<div class="modal fade" id="atualizarAtividadeModal" tabindex="-1" aria-labelledby="atualizarModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="atualizarModalLabel">Atualizar Atividade</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Formulário para atualização de atividade -->
+        <form id="atualizarForm">
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="atualizarTitulo" placeholder="Título" name="atualizarTitulo">
+            <label for="atualizarTitulo">Novo Título</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="atualizarDescricao" placeholder="Descrição" name="atualizarDescricao">
+            <label for="atualizarDescricao">Nova Descrição</label>
+          </div>
+          <div class="form-group">
+            <label for="atualizarConclusao">Nova Data de Conclusão:</label>
+            <input type="date" class="form-control" id="atualizarConclusao" name="atualizarConclusao" value="">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary" id="atualizar" name="atualizar">Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <script>
     $(document).ready(function(){
@@ -274,7 +329,7 @@ var dataCriacao = new Date().toLocaleString('pt-BR', {
 var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
           
           // Crie um elemento HTML para exibir a atividade na tela
-          var atividadeHTML = '<div class="card">';
+          var atividadeHTML = '<div class="card" id="tarefa_' + atividade.id + '">';
           atividadeHTML +=  '<div class="card-body">';
           atividadeHTML +=  '<div class="header-card d-flex">';
           atividadeHTML += '<h5 class="card-title">' + atividade.titulo + '</h5>';
@@ -286,7 +341,7 @@ var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
           atividadeHTML += '</div>';
           atividadeHTML += '<p class="card-text">' + atividade.descricao + '</p>';
           atividadeHTML += '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
-          atividadeHTML += '<a href="backend/delete.php" class="card-link btn btn-danger" id="excluir"><i class="bi bi-trash"></i>Excluir</a>';
+          atividadeHTML += '<a href="#" class="card-link btn btn-danger excluir" id="excluir" data-atividade-id="' + atividade.id + '"><i class="bi bi-trash"></i>Excluir</a>';
           atividadeHTML += '<a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>';
           atividadeHTML += '</div>';
           atividadeHTML += '</div>'; 
@@ -304,62 +359,116 @@ var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
       
     })
 
- 
+        //Excluir
+    
+    $(document).ready(function() {
+    // Função para exclusão de tarefa
+    $(document).on('click', '.excluir', function(e) {
+        e.preventDefault();
+        var tarefaId = $(this).data('atividade-id'); // Obtém o ID da tarefa a ser excluída
 
-// document.addEventListener("DOMContentLoaded", function() {
-//   const cardId = 1; // Substitua isso pelo ID real do card que deseja excluir
+        $.ajax({
+            method: 'POST',
+            url: 'backend/delete.php', // URL do arquivo de exclusão no servidor
+            data: { id: tarefaId }, // Dados a serem enviados (neste caso, o ID da tarefa)
+            success: function(response) {
+                // A exclusão foi bem-sucedida
+                $('#tarefa_' + tarefaId).remove(); // Remove a tarefa da interface
+                console.log('Tarefa excluída com sucesso');
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Ocorreu um erro na exclusão
+                console.error('Erro na exclusão: ' + errorThrown);
+            }
+        });
+    });
+});
+      //Atualizar 
 
-//   const deleteButton = document.getElementById("excluir");
-  
-//   if (deleteButton) {
-//     deleteButton.addEventListener("click", function() {
-//       fetch('backend/delete.php', {
-//         method: 'DELETE',
-//         body: JSON.stringify({ cardId: cardId }),
-//     }) .then(response => {
-//       if (response.ok) {
-//           // Card excluído com sucesso
-//           // Faça algo, como esconder o card da interface
-//           console.log("Card excluído com sucesso");
-//       } else {
-//           // Lidar com erros, se houver
-//           console.log("Falha ao excluir o card");
-//       }
-//   }) .catch(error => {
-//     console.error('Ocorreu um erro:', error);
-// });
-//     })
-//   }
-   
-   
-   
-// });
+// Lógica para abrir o modal de atualização com os detalhes da atividade a ser atualizada
+$(document).on('click', '.atualizar', function(e) {
+  e.preventDefault();
+  var atividadeId = $(this).data('atividade-id'); // Obtém o ID da atividade a ser atualizada
 
-$(document).ready(function () {
-  $('excluir').on('click', function () {
-      var atividade_id = $(this).data('atividade-id');
+  // Recuperar detalhes da atividade a ser atualizada usando AJAX
+  $.ajax({
+    method: 'GET',
+    url: 'backend/obter_atividade.php?id=' + atividadeId,
+    success: function(response) {
+      // Preencher o modal de atualização com os detalhes da atividade recuperados
+      var atividade = JSON.parse(response);
+      $('#atualizarTitulo').val(atividade.titulo);
+      $('#atualizarDescricao').val(atividade.descricao);
+      $('#atualizarConclusao').val(atividade.data_conclusao);
 
-      // Enviar uma solicitação Ajax para deletar a atividade
-      $.ajax({
-          type: 'POST',
-          url: 'backend/delete.php',
-          data: { atividade_id: atividade_id },
-          success: function (response) {
-              // Exibir a resposta do servidor (pode ser um alert, mensagem na tela, etc.)
-              alert(response);
-              // Se a exclusão for bem-sucedida, você pode fazer outras ações, como remover o elemento HTML da atividade da interface
-              // Exemplo: $(`#atividade-${atividade_id}`).remove();
-          },
-          error: function (xhr, status, error) {
-              // Lidar com erros caso a exclusão falhe
-              console.error(error);
-          }
-      });
+      // Abrir o modal de atualização
+      $('#atualizarAtividadeModal').modal('show');
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.error('Erro ao obter detalhes da atividade: ' + errorThrown);
+    }
   });
 });
+
+// Lógica para processar a atualização quando o botão "Salvar Alterações" é clicado
+$('#atualizar').click(function() {
+  // Obter os valores dos campos do formulário de atualização
+  var novoTitulo = $('#atualizarTitulo').val();
+  var novaDescricao = $('#atualizarDescricao').val();
+  var novaConclusao = $('#atualizarConclusao').val();
+  var atividadeId = $(this).data('atividade-id'); // Obtém o ID da atividade a ser atualizada
+
+  // Enviar dados para o backend para atualização da atividade via AJAX
+  $.ajax({
+    method: 'POST',
+    url: 'backend/atualizar.php',
+    data: {
+      atualizarTitulo: novoTitulo,
+      atualizarDescricao: novaDescricao,
+      atualizarConclusao: novaConclusao,
+      atividadeId: atividadeId
+    },
+    success: function(response) {
+      // Tratar a resposta do servidor após a atualização
+      console.log(response); // Exemplo de log da resposta do servidor
+      // Fechar o modal após a atualização
+      $('#atualizarAtividadeModal').modal('hide');
+      // Atualizar a interface ou recarregar a lista de atividades
+      // ...
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.error('Erro ao atualizar atividade: ' + errorThrown);
+    }
+  });
+});
+
+
+  $(document).ready(function() {
+      $('.alterarStatus').on('click', function() {
+        var idAtividade = this.id.replace('alterarStatus', '');
+
+        var dados = {
+          idAtividade: idAtividade, 
+          novoStatus: 'fechado'
+        };
+          // Realizar a requisição AJAX ao clicar no botão
+          $.ajax({
+              url: 'status.php', // Seu arquivo PHP para processar a alteração
+              method: 'POST',
+              data: dados, // Dados a serem enviados, nesse caso, o novo status
+              success: function(response) {
+                  // Resposta do servidor
+                  alert('Status alterado para fechado!');
+                  // Pode adicionar outras ações ou atualizar a página aqui
+              },
+              error: function() {
+                  alert('Ocorreu um erro ao alterar o status.');
+              }
+          });
+      });
+  });
   
-  
-      
+
     
   </script>
 

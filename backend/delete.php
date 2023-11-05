@@ -1,52 +1,39 @@
 <?php
+// Verifica se a requisição é do tipo POST e se existe um parâmetro 'id'
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
+    // Parâmetro vindo da requisição AJAX
+    $tarefaId = $_POST['id'];
 
-require_once('database.php');
 
-// $codigo = trim($_GET['id']);
-
-// // Dados mockados
-// // $codigo = "14";
-
-// if ($codigo == "") {
-//     echo "Código não encontrado!";
-//     return;
-// }
-
-// //Incluindo o arquivo de conexão no banco de dados
-// require_once("database.php");
-
-// //Definindo a query
-// $SQL = "DELETE FROM atividades " .
-// " WHERE id = :id ";
-
-// $statement = $conexao->prepare($SQL);
-// $statement->bindParam(':id', $codigo);
-// if ($statement->execute()){
-//     echo "Registro removido com sucesso";
-// }
-// else{
-//     echo "Falha ao remover o registro";
-// }
-
-// Verifica se a solicitação foi feita por método POST e se o ID da atividade foi enviado
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['atividade_id'])) {
-    $atividade_id = $_POST['atividade_id'];
-
-    // Prepara e executa a query para deletar a atividade do banco de dados
-    $sql = "DELETE FROM atividades WHERE id = :atividade_id";
-    $statement = $conexao->prepare($sql);
-
+    // Tente realizar a exclusão
     try {
-        $statement->execute(['atividade_id' => $atividade_id]);
-        echo "Atividade deletada com sucesso";
+        // Conexão com o banco de dados usando PDO
+        require_once('database.php');
+
+        // Prepara a consulta SQL para excluir a tarefa (substitua 'sua_tabela' pelo nome da tabela)
+        $sql = "DELETE FROM atividades WHERE id = :id";
+
+        // Prepara e executa a declaração
+        $statement = $conexao->prepare($sql);
+        $statement->bindParam(':id', $tarefaId, PDO::PARAM_INT);
+        $statement->execute();
+
+        // Verifica se a exclusão foi bem-sucedida
+        if ($statement->rowCount() > 0) {
+            // Se ao menos uma linha foi afetada, a exclusão foi realizada com sucesso
+            echo "Tarefa excluída com sucesso";
+        } else {
+            // Caso contrário, a tarefa com o ID especificado não foi encontrada
+            echo "Nenhuma tarefa encontrada com o ID especificado";
+        }
     } catch (PDOException $e) {
-        echo "Erro ao deletar a atividade: " . $e->getMessage();
+        // Em caso de erro, captura a exceção e exibe a mensagem de erro
+        echo "Erro ao excluir a tarefa: " . $e->getMessage();
     }
 } else {
-    echo "Requisição inválida";
+    // Responde caso o ID não seja fornecido na requisição ou a requisição seja inválida
+    echo "ID da tarefa não fornecido ou requisição inválida";
 }
 
-//Fechando a conexão com o banco de dados
 unset($conexao);
-
 ?>

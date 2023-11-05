@@ -23,7 +23,7 @@ if ($quantidade == 0) {
 
 //Percorrendo todos os registros em aberto
 while ($linha = $resultado->fetch(PDO::FETCH_OBJ)) {
-    if ($linha->status === "aberto") {
+    if ($linha->status === "fechado") {
         echo '<div class="card" id="tarefa_'. $linha->id . '">';
         echo '<div class="card-body">';
         echo  '<div class="header-card d-flex">';
@@ -44,14 +44,12 @@ while ($linha = $resultado->fetch(PDO::FETCH_OBJ)) {
         echo    '<h6 class="card-subtitle mb-2 text-body-secondary">Expira em: ' . $date = date("d \d\e ", $timestampEnd) . $meses[date("n", $timestampEnd)] . date(" \d\e Y \à\s H:i:s", $timestampEnd) . '</h6>';
         echo  '</div>';
         echo  '<p class="card-text">' . $linha->descricao . '</p>';
-        echo '<a href="#" class="card-link btn btn-success alterarStatus" id="alterarStatus'. $linha->id .'"><i class="bi bi-check"></i>Marcar como concluído</a>';
+        echo '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
         echo  '<button class="card-link btn btn-danger excluir" id="excluir" data-atividade-id="' . $linha->id . '"><i class="bi bi-trash"></i>Excluir</button>';
         echo  '<a href="#" class="card-link btn btn-secondary atualizar" class="bi bi-pencil-square" id="' . $linha->id . '"  data-atividade-id="' . $linha->id . '"></i>Atualizar</a>';
         echo '</div>';
         echo '</div>';
-    } else {
-        echo 'Sem atividades abertas!';
-    }
+    } 
 } 
 
 
