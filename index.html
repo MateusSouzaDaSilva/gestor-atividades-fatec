@@ -25,25 +25,36 @@
 
 <body>
 
+  <script>
+    $(document).ready(function() {
+        $.ajax({
+            url: 'backend/protect.php',
+            type: 'GET',
+            success: function(response) {
+                if (response === "logado") {
+                    // O usuário está logado, pode proceder com o carregamento da página
+                    console.log("Usuário logado!");
+                } else {
+                    // O usuário não está logado, redirecionar ou tomar outra ação
+                    window.location.href = 'frontend/login.html'; // Redirecionar para a página de login
+                }
+            }
+        });
+    });
+</script>
   <header
     class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-    <div class="col-md-3 mb-2 mb-md-0">
-      <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
-        <svg class="bi" width="40" height="32" role="img" aria-label="Bootstrap">
-          <use xlink:href="#bootstrap"></use>
-        </svg>
-      </a>
-    </div>
-
+    <p class="welcome"></p>
+  
+    
     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-      <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
       <li><a class="nav-link px-2" data-bs-toggle="modal" data-bs-target="#criarAtividadeModal">Adicionar atividade</a>
       </li>
       <li><a class="nav-link px-2" data-bs-toggle="modal" data-bs-target="#creditosModal">Créditos</a></li>
     </ul>
 
     <div class="col-md-3 text-end">
-      <button type="button" class="btn btn-primary">Sair</button>
+      <button type="button" class="btn btn-primary" id="sair">Sair</button>
     </div>
   </header>
 
@@ -207,7 +218,7 @@
 
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="fechar">Fechar</button>
-          <input type="button" class="btn btn-primary" id="cadastrar" name="cadastrar">Salvar</input>
+          <input type="button" class="btn btn-primary" id="cadastrar" name="cadastrar" value="Salvar"></input>
         </form>
         </div>
       </div>
@@ -341,8 +352,8 @@ var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
           atividadeHTML += '</div>';
           atividadeHTML += '<p class="card-text">' + atividade.descricao + '</p>';
           atividadeHTML += '<a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>';
-          atividadeHTML += '<a href="#" class="card-link btn btn-danger excluir" id="excluir" data-atividade-id="' + atividade.id + '"><i class="bi bi-trash"></i>Excluir</a>';
-          atividadeHTML += '<a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>';
+          atividadeHTML += '<button class="card-link btn btn-danger excluir" id="excluir" data-atividade-id="' + atividade.id + '"><i class="bi bi-trash"></i>Excluir</button>';
+          atividadeHTML += '<a href="#" class="card-link btn btn-secondary atualizar" class="bi bi-pencil-square" id="' + atividade.id + '"  data-atividade-id="' + atividade.id + '"></i>Atualizar</a>';
           atividadeHTML += '</div>';
           atividadeHTML += '</div>'; 
 
@@ -383,23 +394,22 @@ var dataConclusaoFormatada = dataConclusao.toLocaleDateString('pt-BR', options);
         });
     });
 });
-      //Atualizar 
-
+  
+        //Atualizar 
 // Lógica para abrir o modal de atualização com os detalhes da atividade a ser atualizada
 $(document).on('click', '.atualizar', function(e) {
   e.preventDefault();
-  var atividadeId = $(this).data('atividade-id'); // Obtém o ID da atividade a ser atualizada
+  var atividadeId = $(this).data('atividade-id');
+  $('#atualizar').data('atividade-id', atividadeId); // Obtém o ID da atividade a ser atualizada
 
   // Recuperar detalhes da atividade a ser atualizada usando AJAX
   $.ajax({
     method: 'GET',
     url: 'backend/obter_atividade.php?id=' + atividadeId,
     success: function(response) {
-      // Preencher o modal de atualização com os detalhes da atividade recuperados
-      var atividade = JSON.parse(response);
-      $('#atualizarTitulo').val(atividade.titulo);
-      $('#atualizarDescricao').val(atividade.descricao);
-      $('#atualizarConclusao').val(atividade.data_conclusao);
+      
+      $('#atualizarTitulo').val(response.titulo);
+      $('#atualizarDescricao').val(response.descricao);
 
       // Abrir o modal de atualização
       $('#atualizarAtividadeModal').modal('show');
@@ -412,13 +422,11 @@ $(document).on('click', '.atualizar', function(e) {
 
 // Lógica para processar a atualização quando o botão "Salvar Alterações" é clicado
 $('#atualizar').click(function() {
-  // Obter os valores dos campos do formulário de atualização
   var novoTitulo = $('#atualizarTitulo').val();
   var novaDescricao = $('#atualizarDescricao').val();
   var novaConclusao = $('#atualizarConclusao').val();
-  var atividadeId = $(this).data('atividade-id'); // Obtém o ID da atividade a ser atualizada
+  var atividadeId = $(this).data('atividade-id');
 
-  // Enviar dados para o backend para atualização da atividade via AJAX
   $.ajax({
     method: 'POST',
     url: 'backend/atualizar.php',
@@ -429,12 +437,9 @@ $('#atualizar').click(function() {
       atividadeId: atividadeId
     },
     success: function(response) {
-      // Tratar a resposta do servidor após a atualização
-      console.log(response); // Exemplo de log da resposta do servidor
-      // Fechar o modal após a atualização
-      $('#atualizarAtividadeModal').modal('hide');
-      // Atualizar a interface ou recarregar a lista de atividades
-      // ...
+      $('#titulo').text(response.novoTitulo);
+      $('#descricao').text(response.novaDescricao);
+      location.reload()
     },
     error: function(jqXHR, textStatus, errorThrown) {
       console.error('Erro ao atualizar atividade: ' + errorThrown);
@@ -445,15 +450,16 @@ $('#atualizar').click(function() {
 
   $(document).ready(function() {
       $('.alterarStatus').on('click', function() {
-        var idAtividade = this.id.replace('alterarStatus', '');
-
+        var idAtividade = $(this).data('atividade-id');
+        console.log(idAtividade);
         var dados = {
           idAtividade: idAtividade, 
           novoStatus: 'fechado'
         };
+
           // Realizar a requisição AJAX ao clicar no botão
           $.ajax({
-              url: 'status.php', // Seu arquivo PHP para processar a alteração
+              url: 'backend/status.php', // Seu arquivo PHP para processar a alteração
               method: 'POST',
               data: dados, // Dados a serem enviados, nesse caso, o novo status
               success: function(response) {
@@ -468,7 +474,39 @@ $('#atualizar').click(function() {
       });
   });
   
+  // logout
+  $(document).ready(function() {
+    $('#sair').click(function() {
+        $.ajax({
+            url: 'backend/logout.php', // Arquivo PHP que executa o logout
+            method: 'POST',
+            success: function(response) {
+                // Lidar com a resposta do servidor, se necessário
+                alert('Sessão finalizada');
+                // Redirecionar para a página de login, por exemplo
+                window.location.href = 'index.html';
+            },
+            error: function(xhr, status, error) {
+                // Lidar com erros, se houver
+                console.error(error);
+            }
+        });
+    });
+});
 
+  // exibir usuario
+  $(document).ready(function() {
+    $.ajax({
+        url: 'backend/get_user.php', // Arquivo PHP que recupera o nome do usuário da sessão
+        type: 'GET',
+        success: function(response) {
+            $('.welcome').text('Bem-vindo, ' + response + '!'); // Exibe o nome do usuário no elemento HTML
+        },
+        error: function() {
+            console.error('Erro ao obter o nome do usuário');
+        }
+    });
+});
     
   </script>
 

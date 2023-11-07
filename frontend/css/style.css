@@ -23,3 +23,21 @@ body {
 header {
     background-color: #231c1c;
 }
+
+.welcome {
+    color: aliceblue;
+    margin-left: 10px;
+}
+
+.card-vencido span {
+    color: rgb(240, 78, 78);
+    font-weight: 600;
+}
+
+span {
+    margin-left: 5px;
+}
+
+.bi-exclamation-circle-fill {
+    margin-right: 5px;
+}
