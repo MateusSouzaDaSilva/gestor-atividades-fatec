@@ -84,51 +84,10 @@
         window.addEventListener("DOMContentLoaded", fazerRequisicao);
     </script>
 
-       <!-- <div class="card">
-        <div class="card-body">
-          <div class="header-card d-flex">
-            <h5 class="card-title">titulo da tarefa</h5>
-            <h5 class="offset-md-4 ms-auto">Status: Em aberto</h5>
-          </div>
-          <div class="card-prazo">
-            <h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>
-          </div>
-          <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum laboriosam assumenda
-            incidunt! Ab sunt animi distinctio quis dolore sapiente, nam cumque consectetur et! Tempora autem blanditiis
-            ipsum praesentium, ut dolores.</p>
-          <a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Marcar como concluído</a>
-          <a href="#" class="card-link btn btn-danger"><i cla1ss="bi bi-trash"></i>Excluir</a>
-          <a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>
-        </div>
-      </div>  -->
-
- 
-
     </div>
 
     <div class="lista-atividades-concluidas" id="atividades-concluidas">
       <p>Concluídas</p>
-
-      <!-- <div class="card">
-        <div class="card-body">
-          <div class="header-card d-flex">
-            <h5 class="card-title">titulo da tarefa</h5>
-            <h5 class="offset-md-4 ms-auto">Status: Concluída</h5>
-          </div>
-          <div class="card-prazo">
-            <h6 class="card-subtitle mb-2 text-body-secondary">Criada em: </h6>
-            <h6 class="card-subtitle mb-2 text-body-secondary">Expira em:</h6>
-          </div>
-
-          <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum laboriosam assumenda
-            incidunt! Ab sunt animi distinctio quis dolore sapiente, nam cumque consectetur et! Tempora autem blanditiis
-            ipsum praesentium, ut dolores.</p>
-          <a href="#" class="card-link btn btn-success"><i class="bi bi-check"></i>Concluído</a>
-          <a href="#" class="card-link btn btn-danger"><i class="bi bi-trash"></i>Excluir</a>
-          <a href="#" class="card-link btn btn-secondary"><i class="bi bi-pencil-square"></i>Atualizar</a>
-        </div>
-      </div> -->
 
       <script>
         // Função para fazer a requisição AJAX
@@ -186,7 +145,7 @@
           <h1 class="modal-title fs-5" id="criarModalLabel">Criar atividade</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <form action="POST" id="adicionarForm">
+        <form method="POST" id="adicionarForm">
         <div class="modal-body">
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="titulo" placeholder="titulo" name="titulo">
@@ -217,8 +176,8 @@
 
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="fechar">Fechar</button>
-          <input type="button" class="btn btn-primary" id="cadastrar" name="cadastrar">Salvar</input>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="Fechar">Fechar</button>
+          <input type="button" class="btn btn-primary" id="cadastrar" name="cadastrar" value="Salvar">
         </form>
         </div>
       </div>

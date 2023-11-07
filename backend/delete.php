@@ -11,10 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
         require_once('database.php');
 
         // Prepara a consulta SQL para excluir a tarefa (substitua 'sua_tabela' pelo nome da tabela)
-        $sql = "DELETE FROM atividades WHERE id = :id";
+        $query = "DELETE FROM atividades WHERE id = :id";
 
         // Prepara e executa a declaração
-        $statement = $conexao->prepare($sql);
+        $statement = $conexao->prepare($query);
         $statement->bindParam(':id', $tarefaId, PDO::PARAM_INT);
         $statement->execute();
 

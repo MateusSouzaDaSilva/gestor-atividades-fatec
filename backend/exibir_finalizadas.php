@@ -63,9 +63,7 @@ if ($quantidade == 0) {
             echo  '<a href="#" class="card-link btn btn-secondary atualizar" class="bi bi-pencil-square" id="' . $linha->id . '"  data-atividade-id="' . $linha->id . '"></i>Atualizar</a>';
             echo '</div>';
             echo '</div>';
-        } else {
-            echo 'Sem atividades abertas!';
-        }
+        } 
     }
 }
 
