@@ -208,6 +208,14 @@
             <label for="atualizarConclusao">Nova Data de Conclusão:</label>
             <input type="date" class="form-control" id="atualizarConclusao" name="atualizarConclusao" value="">
           </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="status" id="gridRadios1" value="aberto" checked>
+            <label class="form-check-label" for="gridRadios1">Aberto</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="status" id="gridRadios2" value="fechado">
+            <label class="form-check-label" for="gridRadios2">Fechado</label>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -385,6 +393,7 @@ $('#atualizar').click(function() {
   var novaDescricao = $('#atualizarDescricao').val();
   var novaConclusao = $('#atualizarConclusao').val();
   var atividadeId = $(this).data('atividade-id');
+  var status = $("input[name='status']:checked").val();
 
   $.ajax({
     method: 'POST',
@@ -393,7 +402,8 @@ $('#atualizar').click(function() {
       atualizarTitulo: novoTitulo,
       atualizarDescricao: novaDescricao,
       atualizarConclusao: novaConclusao,
-      atividadeId: atividadeId
+      atividadeId: atividadeId,
+      status: status
     },
     success: function(response) {
       $('#titulo').text(response.novoTitulo);
